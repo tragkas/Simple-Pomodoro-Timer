@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Pomodoro Timer</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+      }
+      h1 {
+        margin-top: 50px;
+      }
+      .timer {
+        font-size: 80px;
+        margin-top: 50px;
+      }
+      .btn {
+        font-size: 24px;
+        margin-top: 30px;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+      }
+      .btn:hover {
+        background-color: #3e8e41;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Pomodoro Timer</h1>
+    <div class="timer"></div>
+    <button class="btn" id="start">Start</button>
+    <button class="btn" id="stop" style="display:none;">Stop</button>
+    <script>
+      let workTime = 25; // in minutes
+      let breakTime = 5; // in minutes
+      let timerInterval;
+      let isWorking = true;
+      let isPaused = true;
+      let timeLeft = workTime * 60; // in seconds
+
+      const timerElement = document.querySelector('.timer');
+      const startButton = document.querySelector('#start');
+      const stopButton = document.querySelector('#stop');
+
+      function startTimer() {
+        isPaused = false;
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          updateTimer();
+          if (timeLeft === 0) {
+            playSound();
+            resetTimer();
+            if (isWorking) {
+              timeLeft = breakTime * 60;
+              isWorking = false;
+            } else {
+              timeLeft = workTime * 60;
+              isWorking = true;
+            }
+          }
+        }, 1000);
+        startButton.style.display = 'none';
+        stopButton.style.display = 'inline-block';
+      }
+
+      function stopTimer() {
+        isPaused = true;
+        clearInterval(timerInterval);
+        startButton.style.display = 'inline-block';
+        stopButton.style.display = 'none';
+      }
+
+      function resetTimer() {
+        timeLeft = workTime * 60;
+        isWorking = true;
+        updateTimer();
+      }
+
+      function updateTimer() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerElement.innerHTML = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+      }
+
+      function playSound() {
+        const audio = new Audio('https://interactive-examples.mdn.mozilla.net/media/examples/t-rex-roar.mp3');
+        audio.play();
+      }
+
+      startButton.addEventListener('click', startTimer);
+      stopButton.addEventListener('click', stopTimer);
+
+      resetTimer();
+    </script>
+  </body>
+</html>
